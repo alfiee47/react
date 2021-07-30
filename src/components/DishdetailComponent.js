@@ -1,4 +1,6 @@
 import React, {Component} from "react";
+import { baseUrl } from '../shared/baseUrl';
+
 import { Card, CardImg, CardText, CardBody,
     CardTitle, Breadcrumb, BreadcrumbItem,Button, Row, Col,Label, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import { Link } from 'react-router-dom';
@@ -29,9 +31,8 @@ class CommentForm extends Component{
           });
     }
     handleSubmit(values) {
-        console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current State is: ' + JSON.stringify(values));
-        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
+        this.toggleModal();
+        this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
         // event.preventDefault();
     }
 
@@ -47,20 +48,20 @@ render(){
                 <Row className="form-group">
                 <Label htmlFor="rating" md={12}>Rating</Label>
                 <Col md={12}>
-                <Control.select  className="form-control" model=".rating" id="rating" name="rating">
-                <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
+                <Control.select  className="form-control" model=".rating" id="rating" >
+                <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
 
                 </Control.select>
                 </Col>
                 </Row>
                 <Row className="form-group">
-                <Label htmlFor="name" md={12}>Your Name</Label>
+                <Label htmlFor="author" md={12}>Your Name</Label>
                 <Col md={12}>
-                <Control.text model=".name" id="name" name ="name"
+                <Control.text model=".author" id="author" 
                 placeholder="Your Name"
                 className="form-control"
                 validators={{
@@ -68,7 +69,7 @@ render(){
                 }} />
                 <Errors
                                         className="text-danger"
-                                        model=".name"
+                                        model=".author"
                                         show="touched"
                                         messages={{
                                             required: 'Required',
@@ -81,10 +82,10 @@ render(){
                 </Row>
                 <Row className="form-group">
                 
-                <Label htmlFor="message" md={12}>Comment</Label>
+                <Label htmlFor="comment" md={12}>Comment</Label>
                 <Col md={12}>
-                <Control.textarea model=".message" id="message"
-                name ="message" rows="6"
+                <Control.textarea model=".comment" id="comment"
+                name ="comment" rows="6"
                 
                 className="form-control" />
 
@@ -116,7 +117,7 @@ function RenderDish({dish}){
   
         return (
             <Card>
-            <CardImg top src={dish.image} alt={dish.name} />
+             <CardImg top src={baseUrl + dish.image} alt={dish.name} />
             <CardBody>
               <CardTitle>{dish.name}</CardTitle>
               <CardText>{dish.description}</CardText>
@@ -128,7 +129,7 @@ function RenderDish({dish}){
 }
 
 
-function RenderComments({comments, addComment, dishId}){
+function RenderComments({comments, postComment, dishId}){
     if (comments != null)
         return(
         <div className="col-12 col-md-5 m-1">
@@ -144,7 +145,7 @@ function RenderComments({comments, addComment, dishId}){
     })}
 
         </ul>
-        <CommentForm dishId={dishId} addComment={addComment} />
+        <CommentForm dishId={dishId} postComment={postComment} />
 
             </div>
    );
@@ -203,7 +204,7 @@ const  DishDetail = (props) => {
         </div>
         <div className="col-12 col-md-5 m-1">
         <RenderComments comments={props.comments}
-        addComment={props.addComment}
+         postComment={props.postComment}
         dishId={props.dish.id}
       />
 
